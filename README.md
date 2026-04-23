@@ -1,2 +1,2 @@
  
- 
+ NeuralLens is a high-performance image classification engine built on the ResNet50 architecture. By leveraging deep residual learning, the application transforms raw visual data into structured mathematical insights, identifying over 1,000 object categories with probabilistic precision. Designed with a modular backend and a Streamlit frontend, it bridges the gap between complex computer vision research and user-friendly web deployment.
