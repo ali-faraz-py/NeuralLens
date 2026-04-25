@@ -5,7 +5,7 @@ from predict import predict_image
 
 
 st.set_page_config(
-    page_title="NeuralLens",
+    page_title="Neural Lens",
     page_icon="🔍",
     layout="centered"
 )
