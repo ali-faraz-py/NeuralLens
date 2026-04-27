@@ -10,7 +10,7 @@ A professional-grade Computer Vision dashboard built with **Python** and **Strea
 ---
 
 ## 📺 Demo Preview
-![NeuralLens Demo](assets/NeuralLens.gif)
+![NeuralLens Demo](NeuralLens\asessts\NeuralLens.gif)
 
 ---
 
