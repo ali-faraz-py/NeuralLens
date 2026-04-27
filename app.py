@@ -8,7 +8,7 @@ st.set_page_config(
     layout="centered"
 )
 
-st.title("🔍 NeuralLens")
+st.title("🔍 Neural Lens")
 st.markdown("#### AI-Powered Image Recognition Engine")
 st.markdown("Upload any image and our **ResNet50** deep learning model will identify what's in it!")
 st.divider()
