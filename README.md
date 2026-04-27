@@ -48,6 +48,7 @@ A professional-grade Computer Vision dashboard built with **Python** and **Strea
    ```bash
     streamlit run app.py
 
+---
 
 ## 📂 Project Structure
 ```text
@@ -60,6 +61,8 @@ neurallens/
 └── explore.ipynb       # Research and benchmarking of various CV models
 ```
 
+---
+
 ## 🧠 Model Insights
 The engine utilizes a **ResNet50 (Residual Network)**, a landmark architecture in Computer Vision.
 
@@ -69,6 +72,7 @@ The engine utilizes a **ResNet50 (Residual Network)**, a landmark architecture i
 
 * **The Output:** The model generates a Softmax probability distribution across 1,000 classes, which is then decoded into human-readable labels with associated confidence scores.
 
+---
 
 ### 👤 Author
 **Syed Ali Faraz** - [GitHub Profile](https://github.com/ali-faraz-py)
