@@ -1,64 +1,76 @@
 # 🔍 Neural Lens: High-Performance Image Recognition Engine
 
-A professional-grade Computer Vision dashboard built with **Python** and **Streamlit**. This tool utilizes **Deep Residual Learning** via the **ResNet50** architecture to transform raw visual data into structured mathematical insights with high probabilistic precision.
+A full-stack Computer Vision web app built with **Python (FastAPI)** and **Next.js**. This tool utilizes **Deep Residual Learning** via the **ResNet50** architecture to transform raw visual data into structured mathematical insights with high probabilistic precision.
 
 ---
 
 ## 🚀 Live Demo
-**[Click here to try the Live App](https://neural-lens.streamlit.app/)**
+**Frontend:** [neurallens.vercel.app](https://neurallens.vercel.app)
+**Backend API:** [neurallens-api.onrender.com](https://neurallens-api.onrender.com)
 
 ---
 
 ## 📺 Demo Preview
-![NeuralLens Demo](assets/NeuralLens.gif) 
+![NeuralLens Demo](assets/NeuralLens.gif)
 
 ---
 
 ## ✨ Features
 - **Deep Residual Learning:** Leverages a 50-layer ResNet architecture to overcome the vanishing gradient problem, ensuring high-fidelity feature extraction.
 - **Probabilistic Classification:** Identifies over **1,000 object categories** from the ImageNet dataset with a Top-5 confidence ranking system.
-- **Real-Time Inference:** Optimized image preprocessing pipeline (224x224 RGB normalization) for near-instant classification.
-- **Interactive Analytics:** Dynamic bar charts powered by **Plotly** to visualize the model's confidence distribution across different classes.
-- **Technical UI:** Includes a comprehensive sidebar with model metadata, supported formats, and architecture specifications.
+- **Viewfinder UI:** A custom "scanning" interface with animated corner brackets and a live scan-line effect while the model analyzes the image.
+- **Real-Time Inference:** Optimized image preprocessing pipeline (224x224 RGB normalization) for fast classification via a dedicated API.
+- **Confidence Readout:** Color-coded confidence tiers (high / medium / low) for both the top prediction and the full Top-5 breakdown.
 
 ---
 
 ## 🛠️ Tech Stack
-- **Language:** Python 3.12
-- **Framework:** Streamlit (Web UI)
+- **Backend:** FastAPI (Python)
+- **Frontend:** Next.js / React, Tailwind CSS
 - **Deep Learning Engine:** TensorFlow / Keras
 - **Architecture:** ResNet50 (Pre-trained on ImageNet)
-- **Data Visualization:** Plotly Express
-- **Image Processing:** Pillow & NumPy
+- **Deployment:** Render (backend) + Vercel (frontend)
 
 ---
 
 ## 🚀 Installation & Local Setup
 
-1. **Clone the repository:**
-   ```bash
-   git clone [https://github.com/ali-faraz-py/NeuralLens](https://github.com/ali-faraz-py/NeuralLens)
-   cd NeuralLens
+**Backend**
+```bash
+cd backend
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
 
-2. **Install dependencies:**
-   ```bash
-    pip install -r requirements.txt
+**Frontend**
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-3. **Run the application:**
-   ```bash
-    streamlit run app.py
+Create a `.env.local` file in `frontend/` with:
+```
+NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
+```
 
 ---
 
 ## 📂 Project Structure
 ```text
 neurallens/
-├── app.py              # Streamlit Web UI and visualization logic
-├── predict.py          # ResNet50 model loading and inference engine
-├── requirements.txt    # Project dependencies (TensorFlow, Streamlit, etc.)
-├── .gitattributes      # LFS tracking and GitHub language statistics
-├── .gitignore          # Prevents tracking of cache and hidden files
-└── explore.ipynb       # Research and benchmarking of various CV models
+├── backend/
+│   ├── app/
+│   │   ├── main.py       # FastAPI routes
+│   │   └── predict.py    # ResNet50 model loading and inference engine
+│   └── requirements.txt
+├── frontend/
+│   └── src/app/
+│       ├── page.js       # Upload UI, viewfinder animation, results
+│       └── globals.css   # Scan-line and pulse animations
+├── assets/
+│   └── NeuralLens.gif
+└── README.md
 ```
 
 ---
@@ -74,7 +86,13 @@ The engine utilizes a **ResNet50 (Residual Network)**, a landmark architecture i
 
 ---
 
+## Known Limitations
+- Trained on **ImageNet**, which covers common objects, animals, and everyday items — it has no concept of "person" or "face" as categories, so photos of people may return unrelated object labels. This is expected behavior for an ImageNet-trained classifier, not a bug.
+- The backend is hosted on Render's free tier, which spins down after inactivity. The first request after idle time may take 30-60 seconds to respond.
+
+---
+
 ### 👤 Author
 **Syed Ali Faraz** - [GitHub Profile](https://github.com/ali-faraz-py)
 
-*If you found this NLP pipeline useful, please give the repository a ⭐!*
+*If you found this project useful, please give the repository a ⭐!*
