@@ -8,15 +8,34 @@ export default function Home() {
   const [predictions, setPredictions] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
 
-  const handleFileChange = (e) => {
-    const selected = e.target.files[0];
+  const processFile = (selected) => {
     if (!selected) return;
     setFile(selected);
     setPreview(URL.createObjectURL(selected));
     setPredictions(null);
     setError(null);
+  };
+
+  const handleFileChange = (e) => {
+    processFile(e.target.files[0]);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    processFile(e.dataTransfer.files[0]);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
   };
 
   const handleReset = () => {
@@ -77,9 +96,18 @@ export default function Home() {
         </p>
 
         {!preview && (
-          <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-8 cursor-pointer hover:border-gray-400 transition">
+          <label
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            className={`flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-8 cursor-pointer transition ${
+              isDragging
+                ? "border-gray-900 bg-gray-100"
+                : "border-gray-300 hover:border-gray-400"
+            }`}
+          >
             <span className="text-sm text-gray-500">
-              Click to select an image
+              {isDragging ? "Drop it here" : "Click or drag an image here"}
             </span>
             <input
               ref={fileInputRef}
