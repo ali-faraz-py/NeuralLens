@@ -8,46 +8,42 @@ export default function Home() {
   const [predictions, setPredictions] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef(null);
+  const abortControllerRef = useRef(null);
 
-  const processFile = (selected) => {
+  const handleFileChange = (e) => {
+    const selected = e.target.files[0];
     if (!selected) return;
+
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
     setFile(selected);
     setPreview(URL.createObjectURL(selected));
     setPredictions(null);
     setError(null);
-  };
-
-  const handleFileChange = (e) => {
-    processFile(e.target.files[0]);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setIsDragging(false);
-    processFile(e.dataTransfer.files[0]);
-  };
-
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = () => {
-    setIsDragging(false);
+    setLoading(false);
   };
 
   const handleReset = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
     setFile(null);
     setPreview(null);
     setPredictions(null);
     setError(null);
+    setLoading(false);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const handleClassify = async () => {
     if (!file) return;
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
 
     setLoading(true);
     setError(null);
@@ -62,6 +58,7 @@ export default function Home() {
       const response = await fetch(`${apiUrl}/predict`, {
         method: "POST",
         body: formData,
+        signal: controller.signal,
       });
 
       if (!response.ok) {
@@ -71,9 +68,14 @@ export default function Home() {
       const data = await response.json();
       setPredictions(data.predictions);
     } catch (err) {
+      if (err.name === "AbortError") {
+        return;
+      }
       setError(err.message);
     } finally {
-      setLoading(false);
+      if (abortControllerRef.current === controller) {
+        setLoading(false);
+      }
     }
   };
 
@@ -92,22 +94,13 @@ export default function Home() {
           🔍 Neural Lens
         </h1>
         <p className="text-sm text-center text-gray-500 mb-6">
-          Vision analysis engine — ResNet50 · 1,000+ object categories
+          Vision analysis engine — MobileNetV2 · 1,000+ object categories
         </p>
 
         {!preview && (
-          <label
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            className={`flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-8 cursor-pointer transition ${
-              isDragging
-                ? "border-gray-900 bg-gray-100"
-                : "border-gray-300 hover:border-gray-400"
-            }`}
-          >
+          <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-8 cursor-pointer hover:border-gray-400 transition">
             <span className="text-sm text-gray-500">
-              {isDragging ? "Drop it here" : "Click or drag an image here"}
+              Click to select an image
             </span>
             <input
               ref={fileInputRef}
@@ -121,7 +114,6 @@ export default function Home() {
 
         {preview && (
           <div className="relative mt-1 bg-black rounded-xl p-3 overflow-hidden">
-            {/* corner brackets */}
             <span className="absolute top-2 left-2 w-6 h-6 border-t-[3px] border-l-[3px] rounded-tl-sm" style={{ borderColor: "#00e5a0" }} />
             <span className="absolute top-2 right-2 w-6 h-6 border-t-[3px] border-r-[3px] rounded-tr-sm" style={{ borderColor: "#00e5a0" }} />
             <span className="absolute bottom-2 left-2 w-6 h-6 border-b-[3px] border-l-[3px] rounded-bl-sm" style={{ borderColor: "#00e5a0" }} />
@@ -155,7 +147,7 @@ export default function Home() {
             className="scan-pulse mt-3 text-center font-mono text-xs tracking-widest"
             style={{ color: "#00e5a0" }}
           >
-            ◉ SCANNING THROUGH 50 LAYERS...
+            ◉ SCANNING...
           </p>
         )}
 
@@ -230,7 +222,7 @@ export default function Home() {
         )}
 
         <p className="mt-8 text-xs text-center text-gray-400">
-          Powered by ResNet50 · Trained on ImageNet · For educational purposes
+          Powered by MobileNetV2 · Trained on ImageNet · For educational purposes
         </p>
       </div>
     </main>
