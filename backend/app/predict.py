@@ -1,12 +1,12 @@
 import tensorflow as tf
-from tensorflow.keras.applications.resnet50 import ResNet50, preprocess_input, decode_predictions
+from tensorflow.keras.applications.mobilenet_v2 import MobileNetV2, preprocess_input, decode_predictions
 from tensorflow.keras.preprocessing import image
 import numpy as np
 from PIL import Image
 from io import BytesIO
 
 
-model = ResNet50(weights='imagenet')
+model = MobileNetV2(weights='imagenet')
 
 def predict_image(image_bytes):
     img = Image.open(BytesIO(image_bytes))
