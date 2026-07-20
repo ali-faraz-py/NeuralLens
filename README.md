@@ -11,7 +11,7 @@ A full-stack Computer Vision web app built with **Python (FastAPI)** and **Next.
 ---
 
 ## 📺 Demo Preview
-![NeuralLens Demo](assets/NeuralLens.gif)
+![NeuralLens Demo](assets/NeuralLens.mp4)
 
 ---
 
