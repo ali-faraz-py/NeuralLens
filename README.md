@@ -1,6 +1,6 @@
 # 🔍 Neural Lens: High-Performance Image Recognition Engine
 
-A full-stack Computer Vision web app built with **Python (FastAPI)** and **Next.js**. This tool utilizes **Deep Residual Learning** via the **ResNet50** architecture to transform raw visual data into structured mathematical insights with high probabilistic precision.
+A full-stack Computer Vision web app built with **Python (FastAPI)** and **Next.js**. This tool utilizes **MobileNetV2** to transform raw visual data into structured mathematical insights with high probabilistic precision, in a lightweight footprint suited for free-tier deployment.
 
 ---
 
@@ -27,8 +27,8 @@ A full-stack Computer Vision web app built with **Python (FastAPI)** and **Next.
 ## 🛠️ Tech Stack
 - **Backend:** FastAPI (Python)
 - **Frontend:** Next.js / React, Tailwind CSS
-- **Deep Learning Engine:** TensorFlow / Keras
-- **Architecture:** ResNet50 (Pre-trained on ImageNet)
+- **Deep Learning Engine:** TensorFlow (CPU build) / Keras
+- **Architecture:** MobileNetV2 (Pre-trained on ImageNet)
 - **Deployment:** Render (backend) + Vercel (frontend)
 
 ---
@@ -76,13 +76,15 @@ neurallens/
 ---
 
 ## 🧠 Model Insights
-The engine utilizes a **ResNet50 (Residual Network)**, a landmark architecture in Computer Vision.
+The engine utilizes **MobileNetV2**, an architecture specifically designed for efficient, low-memory inference — well suited for resource-constrained deployment environments.
 
-* **The Architecture:** Unlike traditional sequential models, ResNet uses **shortcut connections** (identity mapping) to allow gradients to flow through deeper layers.
+* **The Architecture:** MobileNetV2 uses depthwise separable convolutions and inverted residual blocks to dramatically reduce parameter count and memory footprint compared to larger networks like ResNet50, while retaining strong classification accuracy.
 
 * **Input Transformation:** Images are mathematically resized to **224x224x3** and normalized using the specific mean/std-dev requirements of the ImageNet-trained weights.
 
 * **The Output:** The model generates a Softmax probability distribution across 1,000 classes, which is then decoded into human-readable labels with associated confidence scores.
+
+* **Deployment Note:** The project originally used ResNet50, but was switched to MobileNetV2 (running on `tensorflow-cpu`) after hitting memory limits on free-tier hosting — a practical tradeoff between model size and deployability.
 
 ---
 
