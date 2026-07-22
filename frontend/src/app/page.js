@@ -1,275 +1,230 @@
 "use client";
 
-import { useState } from "react";
-
-const PROJECTS = [
-  {
-    name: "DEEPFAKE_DETECTOR",
-    category: "vision",
-    description:
-      "Classifies uploaded face images and video as real or AI-generated, with a confidence score and frame-sampling for video.",
-    task: "Binary Classification",
-    architecture: "EfficientNet-B0",
-    dataset: "100k+ labeled faces",
-    stack: "PyTorch · FastAPI · Next.js",
-    live: "https://deepfake-detector-olive.vercel.app/",
-    source: "https://github.com/ali-faraz-py/deepfake-detector",
-  },
-  {
-    name: "PICASSIFY",
-    category: "generative",
-    description:
-      "Transforms any photo into stylized artwork by blending it with a chosen painting's style, using neural style transfer.",
-    task: "Neural Style Transfer",
-    architecture: "VGG19 (pretrained)",
-    dataset: "User content + style pairs",
-    stack: "PyTorch · Streamlit",
-    live: "https://picassify-art.streamlit.app/",
-    source: "https://github.com/ali-faraz-py/Picassify",
-  },
-  {
-    name: "NEURAL_LENS",
-    category: "vision",
-    description:
-      "Real-time image recognition across 1,000+ object categories, built on a MobileNetV2 backbone.",
-    task: "Image Classification",
-    architecture: "MobileNetV2",
-    dataset: "ImageNet-pretrained",
-    stack: "TensorFlow · FastAPI · Next.js",
-    live: "https://neural-lens-nine.vercel.app/",
-    source: "https://github.com/ali-faraz-py/NeuralLens",
-  },
-  {
-    name: "DIABETES_DETECTOR",
-    category: "health",
-    description:
-      "Predicts diabetes risk from clinical metrics, with real-time probability scoring and downloadable reports.",
-    task: "Risk Classification",
-    architecture: "Random Forest",
-    dataset: "Clinical health metrics",
-    stack: "scikit-learn · Streamlit",
-    live: "https://diabetes-risk-diagnostic.streamlit.app/",
-    source: "https://github.com/ali-faraz-py/DiabetesDetector",
-  },
-  {
-    name: "SENTIMENT_SENSE",
-    category: "nlp",
-    description:
-      "Aspect-based sentiment analysis dashboard detecting business topics (food, service, price) and emotional context in real time.",
-    task: "Aspect-Based Sentiment Analysis",
-    architecture: "DistilBERT + BART (zero-shot)",
-    dataset: "Business feedback text",
-    stack: "Transformers · Streamlit",
-    live: "https://sentiment-sense-ai.streamlit.app/",
-    source: "https://github.com/ali-faraz-py/SentimentSense",
-  },
-  {
-    name: "AETHERQUANT",
-    category: "finance",
-    description:
-      "Crypto market trend classifier analyzing 24 technical indicators (RSI, MACD, VWAP) via live market data.",
-    task: "Market Trend Classification",
-    architecture: "XGBoost",
-    dataset: "Yahoo Finance (24 indicators)",
-    stack: "Pandas · Plotly · Streamlit",
-    live: "https://aether-quant.streamlit.app/",
-    source: "https://github.com/ali-faraz-py/AetherQuant",
-  },
-];
-
-const ACCENT = {
-  vision: "#2955D6",
-  generative: "#B23DD9",
-  health: "#1F9D55",
-  nlp: "#C9781A",
-  finance: "#0E7C86",
-};
-
-const STACK = [
-  "PYTORCH", "TENSORFLOW", "FASTAPI", "NEXT.JS", "SCIKIT-LEARN",
-  "TRANSFORMERS", "XGBOOST", "STREAMLIT", "TAILWIND CSS",
-];
-
-function NeuralGraphic() {
-  const inputY = [40, 90, 140];
-  const hiddenY = [20, 65, 110, 155];
-  const outputY = [55, 120];
-  const inputX = 20, hiddenX = 110, outputX = 200;
-
-  const lines = [];
-  let lineIndex = 0;
-  inputY.forEach((y1, i) => {
-    hiddenY.forEach((y2, j) => {
-      lineIndex++;
-      lines.push(
-        <line key={`ih-${i}-${j}`} x1={inputX} y1={y1} x2={hiddenX} y2={y2}
-          stroke="#C7C3BA" strokeWidth="1" className="signal-line"
-          style={{ animationDelay: `${(lineIndex % 5) * 0.15}s` }} />
-      );
-    });
-  });
-  hiddenY.forEach((y1, i) => {
-    outputY.forEach((y2, j) => {
-      lineIndex++;
-      lines.push(
-        <line key={`ho-${i}-${j}`} x1={hiddenX} y1={y1} x2={outputX} y2={y2}
-          stroke="#C7C3BA" strokeWidth="1" className="signal-line"
-          style={{ animationDelay: `${(lineIndex % 5) * 0.15 + 0.3}s` }} />
-      );
-    });
-  });
-
-  return (
-    <svg viewBox="0 0 220 180" className="w-full h-full" aria-hidden="true">
-      {lines}
-      {inputY.map((y, i) => (
-        <circle key={`i-${i}`} cx={inputX} cy={y} r="5" fill="#14181C"
-          className="pulse-node" style={{ animationDelay: `${i * 0.15}s` }} />
-      ))}
-      {hiddenY.map((y, i) => (
-        <circle key={`h-${i}`} cx={hiddenX} cy={y} r="5"
-          fill={i === 1 ? "#2955D6" : "#14181C"} className="pulse-node"
-          style={{ animationDelay: `${0.4 + i * 0.15}s` }} />
-      ))}
-      {outputY.map((y, i) => (
-        <circle key={`o-${i}`} cx={outputX} cy={y} r="5"
-          fill={i === 0 ? "#1F9D55" : "#14181C"} className="pulse-node"
-          style={{ animationDelay: `${0.9 + i * 0.15}s` }} />
-      ))}
-    </svg>
-  );
-}
-
-function ModelCard({ project }) {
-  return (
-    <div className="group relative border border-hairline rounded-[6px] bg-[#FFFEFC] pl-7 pr-6 py-6 transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_12px_24px_-8px_rgba(20,24,28,0.12)] hover:border-ink/15 overflow-hidden">
-      <span className="absolute left-0 top-0 bottom-0 w-1" style={{ backgroundColor: ACCENT[project.category] }} />
-      <div className="flex items-center justify-between">
-        <h3 className="font-mono text-[14px] font-bold tracking-wide">{project.name}</h3>
-        <span className="font-mono text-[10px] font-bold text-live flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-live live-dot inline-block" />
-          LIVE
-        </span>
-      </div>
-      <p className="font-body mt-3.5 text-[14px] leading-relaxed text-[#3A3D41]">{project.description}</p>
-      <div className="mt-4.5 pt-4 border-t border-dashed border-hairline grid grid-cols-2 gap-y-3 gap-x-4">
-        <div>
-          <div className="font-mono uppercase text-[10px] font-bold tracking-wide text-slate">Task</div>
-          <div className="font-body text-[13px] font-medium mt-0.5">{project.task}</div>
-        </div>
-        <div>
-          <div className="font-mono uppercase text-[10px] font-bold tracking-wide text-slate">Architecture</div>
-          <div className="font-body text-[13px] font-medium mt-0.5">{project.architecture}</div>
-        </div>
-        <div>
-          <div className="font-mono uppercase text-[10px] font-bold tracking-wide text-slate">Dataset</div>
-          <div className="font-body text-[13px] font-medium mt-0.5">{project.dataset}</div>
-        </div>
-        <div>
-          <div className="font-mono uppercase text-[10px] font-bold tracking-wide text-slate">Stack</div>
-          <div className="font-body text-[13px] font-medium mt-0.5">{project.stack}</div>
-        </div>
-      </div>
-      <div className="mt-5.5 flex gap-2">
-        <a href={project.live} target="_blank" rel="noopener noreferrer"
-          className="flex-1 text-center font-mono text-[11px] font-bold tracking-wide bg-ink text-paper rounded-[6px] py-2.5 transition-opacity hover:opacity-85">
-          LAUNCH ↗
-        </a>
-        <a href={project.source} target="_blank" rel="noopener noreferrer"
-          className="flex-1 text-center font-mono text-[11px] font-bold tracking-wide border border-hairline rounded-[6px] py-2.5 transition-colors hover:border-ink">
-          SOURCE ↗
-        </a>
-      </div>
-    </div>
-  );
-}
+import { useState, useRef } from "react";
 
 export default function Home() {
-  const [copied, setCopied] = useState(false);
+  const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [predictions, setPredictions] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const fileInputRef = useRef(null);
+  const abortControllerRef = useRef(null);
 
-  const handleCopyEmail = () => {
-    navigator.clipboard.writeText("syedalifaraz52@gmail.com");
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const handleFileChange = (e) => {
+    const selected = e.target.files[0];
+    if (!selected) return;
+
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    setFile(selected);
+    setPreview(URL.createObjectURL(selected));
+    setPredictions(null);
+    setError(null);
+    setLoading(false);
+  };
+
+  const handleReset = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    setFile(null);
+    setPreview(null);
+    setPredictions(null);
+    setError(null);
+    setLoading(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleClassify = async () => {
+    if (!file) return;
+
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
+    setLoading(true);
+    setError(null);
+    setPredictions(null);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+
+      const response = await fetch(`${apiUrl}/predict`, {
+        method: "POST",
+        body: formData,
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        throw new Error("Prediction failed. Please try again.");
+      }
+
+      const data = await response.json();
+      setPredictions(data.predictions);
+    } catch (err) {
+      if (err.name === "AbortError") {
+        return;
+      }
+      setError(err.message);
+    } finally {
+      if (abortControllerRef.current === controller) {
+        setLoading(false);
+      }
+    }
+  };
+
+  const topPrediction = predictions ? predictions[0] : null;
+
+  const confidenceInfo = (conf) => {
+    if (conf > 0.7) return { text: "HIGH CONFIDENCE", color: "#00e5a0" };
+    if (conf > 0.4) return { text: "MEDIUM CONFIDENCE", color: "#ffb020" };
+    return { text: "LOW CONFIDENCE", color: "#ff5c5c" };
   };
 
   return (
-    <main className="min-h-screen bg-paper bg-grid-texture">
-      <div className="max-w-5xl mx-auto px-6">
-        <div className="pt-9 flex items-center justify-between font-mono text-[12px] font-bold tracking-wide text-slate">
-          <span>SYED_ALI_FARAZ.PORTFOLIO</span>
-          <div className="flex gap-6">
-            <a href="https://github.com/ali-faraz-py" target="_blank" rel="noopener noreferrer" className="hover:text-ink transition-colors">GITHUB</a>
-            <a href="https://www.linkedin.com/in/syed-m-ali-faraz" target="_blank" rel="noopener noreferrer" className="hover:text-ink transition-colors">LINKEDIN</a>
-            <a href="https://www.upwork.com/freelancers/~017cd21f872163dffa?mp_source=share" target="_blank" rel="noopener noreferrer" className="hover:text-ink transition-colors">UPWORK</a>
-          </div>
-        </div>
-
-        <div className="pt-20 pb-14 flex flex-col md:flex-row items-center gap-8">
-          <div className="flex-1">
-            <p className="font-mono text-[12px] font-bold tracking-[0.16em] text-signal">MACHINE LEARNING ENGINEER</p>
-            <h1 className="font-display font-bold mt-4 max-w-2xl text-[2.4rem] sm:text-[3rem] lg:text-[3.5rem] leading-[1.06] tracking-tight">
-              I train models. Then I make them work for a living.
-            </h1>
-            <p className="font-body mt-5 max-w-xl text-[16px] text-slate leading-relaxed">
-              Six deployed projects spanning computer vision, NLP, and classic
-              ML. Each card below is a spec sheet for a live, working system —
-              launch it directly or read the source.
-            </p>
-            <div className="mt-8 inline-flex items-center gap-2 font-mono text-[12px] text-slate bg-white border border-hairline px-3.5 py-2 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-live live-dot inline-block" />
-              6 SYSTEMS IN PRODUCTION
-            </div>
-          </div>
-          <div className="w-[210px] h-[175px] md:w-[280px] md:h-[230px] shrink-0 opacity-90 mx-auto md:mx-0">
-            <NeuralGraphic />
-          </div>
-        </div>
-
-        {/* stack strip */}
-        <div className="border-y border-hairline py-3 mb-14 overflow-x-auto">
-          <div className="flex items-center gap-3 font-mono text-[10px] font-bold tracking-widest text-slate whitespace-nowrap">
-            <span className="text-signal">STACK</span>
-            <span className="text-hairline">/</span>
-            {STACK.map((s, i) => (
-              <span key={s} className="flex items-center gap-3">
-                {s}
-                {i < STACK.length - 1 && <span className="text-hairline">·</span>}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <p className="font-mono text-[11px] font-bold tracking-[0.14em] text-slate uppercase mb-5">
-          // PROJECT_INDEX
+    <main className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-6">
+      <div className="w-full max-w-lg bg-white rounded-2xl shadow-md p-8">
+        <h1 className="text-2xl font-bold text-center text-gray-800 mb-1">
+          🔍 Neural Lens
+        </h1>
+        <p className="text-sm text-center text-gray-500 mb-6">
+          Vision analysis engine — MobileNetV2 · 1,000+ object categories
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pb-20">
-          {PROJECTS.map((project) => (
-            <ModelCard key={project.name} project={project} />
-          ))}
-        </div>
-      </div>
+        {!preview && (
+          <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-xl p-8 cursor-pointer hover:border-gray-400 transition">
+            <span className="text-sm text-gray-500">
+              Click to select an image
+            </span>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+          </label>
+        )}
 
-      {/* dark footer band */}
-      <footer className="bg-ink py-12 mt-4">
-        <div className="max-w-5xl mx-auto px-6 text-center">
-          <div className="font-mono text-[12px] text-gray-400 space-x-3">
-            <button onClick={handleCopyEmail} className="hover:text-white transition-colors cursor-pointer">
-              {copied ? "COPIED ✓" : "EMAIL"}
-            </button>
-            <span>·</span>
-            <a href="https://github.com/ali-faraz-py" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">GITHUB</a>
-            <span>·</span>
-            <a href="https://www.linkedin.com/in/syed-m-ali-faraz" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">LINKEDIN</a>
-            <span>·</span>
-            <a href="https://www.upwork.com/freelancers/~017cd21f872163dffa?mp_source=share" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">UPWORK</a>
+        {preview && (
+          <div className="relative mt-1 bg-black rounded-xl p-3 overflow-hidden">
+            <span className="absolute top-2 left-2 w-6 h-6 border-t-[3px] border-l-[3px] rounded-tl-sm" style={{ borderColor: "#00e5a0" }} />
+            <span className="absolute top-2 right-2 w-6 h-6 border-t-[3px] border-r-[3px] rounded-tr-sm" style={{ borderColor: "#00e5a0" }} />
+            <span className="absolute bottom-2 left-2 w-6 h-6 border-b-[3px] border-l-[3px] rounded-bl-sm" style={{ borderColor: "#00e5a0" }} />
+            <span className="absolute bottom-2 right-2 w-6 h-6 border-b-[3px] border-r-[3px] rounded-br-sm" style={{ borderColor: "#00e5a0" }} />
+
+            <img
+              src={preview}
+              alt="Preview"
+              className="w-full h-56 object-cover rounded-lg"
+            />
+
+            {loading && (
+              <div
+                className="scan-line absolute left-4 right-4 h-0.5"
+                style={{ backgroundColor: "#00e5a0", boxShadow: "0 0 8px #00e5a0" }}
+              />
+            )}
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="hidden"
+            />
           </div>
-          <p className="font-body mt-4 text-[12px] text-gray-500 italic">
-            A good developer knows the math behind the code.
+        )}
+
+        {loading && (
+          <p
+            className="scan-pulse mt-3 text-center font-mono text-xs tracking-widest"
+            style={{ color: "#00e5a0" }}
+          >
+            ◉ SCANNING...
           </p>
-        </div>
-      </footer>
+        )}
+
+        <button
+          onClick={handleClassify}
+          disabled={!file || loading}
+          className="mt-6 w-full py-3 bg-gray-900 text-white font-medium rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-800 transition cursor-pointer"
+        >
+          {loading ? "Analyzing..." : "Classify Image"}
+        </button>
+
+        {error && (
+          <p className="mt-4 text-sm text-red-600 text-center">{error}</p>
+        )}
+
+        {topPrediction && (
+          <>
+            <div className="mt-6 bg-black rounded-xl p-5 text-center">
+              <p className="font-mono text-[10px] tracking-[0.2em] text-gray-500">
+                TOP MATCH
+              </p>
+              <p className="text-2xl font-bold text-white mt-1">
+                {topPrediction.label}
+              </p>
+              <p
+                className="font-mono text-xs mt-2 tracking-wide"
+                style={{ color: confidenceInfo(topPrediction.confidence).color }}
+              >
+                {confidenceInfo(topPrediction.confidence).text} —{" "}
+                {(topPrediction.confidence * 100).toFixed(1)}%
+              </p>
+            </div>
+
+            <div className="mt-6">
+              <p className="font-mono text-[10px] tracking-[0.2em] text-gray-400 mb-3">
+                TOP 5 MATCHES
+              </p>
+              <div className="space-y-3">
+                {predictions.map((p) => (
+                  <div key={p.rank}>
+                    <div className="flex justify-between text-sm mb-1 font-mono">
+                      <span className="text-gray-700">
+                        #{p.rank} {p.label}
+                      </span>
+                      <span className="text-gray-500">
+                        {(p.confidence * 100).toFixed(1)}%
+                      </span>
+                    </div>
+                    <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full"
+                        style={{
+                          width: `${p.confidence * 100}%`,
+                          backgroundColor: confidenceInfo(p.confidence).color,
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
+
+        {(file || predictions) && (
+          <button
+            onClick={handleReset}
+            className="mt-6 w-full py-2 text-sm text-gray-600 border border-gray-300 rounded-xl hover:bg-gray-50 transition cursor-pointer"
+          >
+            Try Another
+          </button>
+        )}
+
+        <p className="mt-8 text-xs text-center text-gray-400">
+          Powered by MobileNetV2 · Trained on ImageNet · For educational purposes
+        </p>
+      </div>
     </main>
   );
 }
